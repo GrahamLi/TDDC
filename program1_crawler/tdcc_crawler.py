@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import logging
+import os
 from pathlib import Path
 from typing import Dict, Iterable, List
 
@@ -11,6 +12,23 @@ from .utils import request_with_retry, save_json
 
 TDCC_URL = "https://www.tdcc.com.tw/smWeb/QryStockAjax.do"
 logger = logging.getLogger(__name__)
+
+
+def _get_verify_option() -> bool | str:
+    """Return the SSL verification setting.
+
+    The value is determined by the ``TDCC_SSL_VERIFY`` environment variable:
+
+    - unset/empty: use system default certificates
+    - ``0``/``false``: disable verification (testing only)
+    - any other value: treated as path to a CA bundle file
+    """
+    env_val = os.getenv("TDCC_SSL_VERIFY")
+    if not env_val:
+        return True
+    if env_val.lower() in {"0", "false"}:
+        return False
+    return env_val
 
 
 def generate_past_year_dates(today: _dt.date | None = None) -> List[str]:
@@ -38,7 +56,8 @@ def fetch_tdcc_data(stock_code: str, date: str) -> Dict:
         "stkNo": stock_code,
     }
     logger.debug("Fetching TDCC data for %s at %s", stock_code, date)
-    resp = request_with_retry("post", TDCC_URL, data=payload)
+    verify = _get_verify_option()
+    resp = request_with_retry("post", TDCC_URL, data=payload, verify=verify)
     return resp.json()
 
 

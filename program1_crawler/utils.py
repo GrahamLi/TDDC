@@ -16,16 +16,21 @@ def request_with_retry(
     *,
     max_retries: int = 3,
     backoff: float = 1.0,
+    verify: bool | str = True,
     **kwargs: Any,
 ) -> requests.Response:
     """Perform an HTTP request with basic retry logic.
 
     Parameters mirror :func:`requests.request`. Retries are attempted on any
     :class:`requests.RequestException`.
+
+    The *verify* parameter matches the behaviour of the same argument in
+    :func:`requests.request`, allowing the caller to provide a custom CA bundle
+    path or disable verification.
     """
     for attempt in range(1, max_retries + 1):
         try:
-            resp = requests.request(method, url, timeout=30, **kwargs)
+            resp = requests.request(method, url, timeout=30, verify=verify, **kwargs)
             resp.raise_for_status()
             return resp
         except requests.RequestException as exc:  # pragma: no cover - network dependent
