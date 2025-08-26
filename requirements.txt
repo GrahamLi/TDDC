@@ -1,0 +1,7 @@
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+lxml>=5.2.1
+tenacity>=8.2.3
+pandas>=2.2.2
+numpy>=2.0.0
+XlsxWriter>=3.2.0
