@@ -61,6 +61,14 @@ python program1_tdcc_scraper.py
 # scraper.run(limit=5)
 ```
 
+#### SSL 驗證設定：
+
+爬蟲預設會驗證 HTTPS 憑證。可透過環境變數 `TDCC_SSL_VERIFY` 調整行為：
+
+- 未設定：使用系統預設 CA
+- 設為 CA 檔案路徑：使用指定憑證檔
+- 設為 `0` 或 `false`：停用驗證（僅限測試環境，正式執行請提供正確 CA 憑證）
+
 #### 輸出結果：
 - 建立 `stock_data/` 目錄
 - 每支股票一個子目錄（例如：`stock_data/2330/`）
